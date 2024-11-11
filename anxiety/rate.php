@@ -1,0 +1,310 @@
+<?php include('session.php'); ?>
+<!DOCTYPE html>
+
+<html lang="id" class="light-style layout-navbar-fixed layout-menu-fixed" dir="ltr" data-theme="theme-default" data-assets-path="<?= $urladmin; ?>/assets/" data-template="vertical-menu-template">
+
+<head>
+  <!--Viewport-->
+  <meta charset="UTF-8">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
+
+  <!--Robots-->
+  <meta name="robots" content="noindex, nofollow" />
+  <title><?php if ($u['level'] === 'superadmin') { ?>Super Admin<?php } elseif ($u['level'] === 'admin') { ?>Admin<?php } else { ?>Member<?php } ?> - <?= $app_name; ?></title>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/x-icon" href="<?= $urldomain; ?>/upload/favicon.png" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400;600;700;900&display=swap" rel="stylesheet" />
+
+  <!-- Icons -->
+  <link rel="stylesheet" href="<?= $urladmin; ?>/assets/vendor/fonts/fontawesome.css?<?= $cache; ?>" />
+  <link rel="stylesheet" href="<?= $urladmin; ?>/assets/vendor/fonts/tabler-icons.css?<?= $cache; ?>" />
+  <link rel="stylesheet" href="<?= $urladmin; ?>/assets/vendor/fonts/flag-icons.css?<?= $cache; ?>" />
+
+  <!-- Core CSS -->
+  <link rel="stylesheet" href="<?= $urladmin; ?>/assets/vendor/css/rtl/core.css?<?= $cache; ?>" class="template-customizer-core-css" />
+  <link rel="stylesheet" href="<?= $urladmin; ?>/assets/vendor/css/rtl/theme-default.css?<?= $cache; ?>" class="template-customizer-theme-css" />
+  <link rel="stylesheet" href="<?= $urladmin; ?>/assets/css/demo.css?<?= $cache; ?>" />
+
+  <!-- Vendors CSS -->
+  <link rel="stylesheet" href="<?= $urladmin; ?>/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css?<?= $cache; ?>" />
+  <link rel="stylesheet" href="<?= $urladmin; ?>/assets/vendor/libs/node-waves/node-waves.css?<?= $cache; ?>" />
+  <link rel="stylesheet" href="<?= $urladmin; ?>/assets/vendor/libs/typeahead-js/typeahead.css?<?= $cache; ?>" />
+  <link rel="stylesheet" href="<?= $urladmin; ?>/assets/vendor/libs/select2/select2.css?<?= $cache; ?>" />
+  <link rel="stylesheet" href="<?= $urladmin; ?>/assets/vendor/libs/apex-charts/apex-charts.css?<?= $cache; ?>" />
+  <link rel="stylesheet" href="<?= $urladmin; ?>/assets/vendor/libs/datatables-bs5/datatables.bootstrap5.css?<?= $cache; ?>" />
+  <link rel="stylesheet" href="<?= $urladmin; ?>/assets/vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.css?<?= $cache; ?>" />
+  <link rel="stylesheet" href="<?= $urladmin; ?>/assets/vendor/libs/datatables-buttons-bs5/buttons.bootstrap5.css?<?= $cache; ?>" />
+  <link rel="stylesheet" href="<?= $urladmin; ?>/assets/vendor/libs/summernote/dist/summernote-bs4.css" />
+
+  <!-- Helpers -->
+  <script src="<?= $urladmin; ?>/assets/vendor/js/helpers.js?<?= $cache; ?>"></script>
+
+  <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
+  <!--? Template customizer: To hide customizer set displayCustomizer value false in config.js.  -->
+  <script src="<?= $urladmin; ?>/assets/vendor/js/template-customizer.js?<?= $cache; ?>"></script>
+  <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
+  <script src="<?= $urladmin; ?>/assets/js/config.js?<?= $cache; ?>"></script>
+</head>
+
+<?php if ($u['level'] == 'superadmin') : ?>
+
+  <body>
+    <!-- Layout wrapper -->
+    <div class="layout-wrapper layout-content-navbar">
+      <div class="layout-container">
+        <!-- Menu -->
+
+        <?php include('sidebar.php'); ?>
+        <!-- / Menu -->
+
+        <!-- Layout container -->
+        <div class="layout-page">
+
+          <!-- Navbar -->
+          <nav class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme" id="layout-navbar">
+            <div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
+              <a class="nav-item nav-link px-0 me-xl-4" href="javascript:void(0)" aria-label="Tutup Navigasi">
+                <i class="ti ti-menu-2 ti-sm"></i>
+              </a>
+            </div>
+
+            <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
+              <?php include('top-menu.php'); ?>
+            </div>
+
+            <!-- Search Small Screens -->
+            <div class="navbar-search-wrapper search-input-wrapper d-none">
+              <input type="text" class="form-control search-input container-xxl border-0" placeholder="Search..." aria-label="Search..." />
+              <i class="ti ti-x ti-sm search-toggler cursor-pointer"></i>
+            </div>
+          </nav>
+          <!-- / Navbar -->
+
+          <!-- Content wrapper -->
+          <div class="content-wrapper">
+            <?php
+            $sql_3 = mysqli_query($conn, "SELECT * FROM `tb_admin` WHERE cuid = 1") or die(mysqli_error($conn));
+            $s3 = mysqli_fetch_array($sql_3);
+            ?>
+            <!-- Content -->
+            <div class="container-xxl flex-grow-1 container-p-y">
+              <h4 class="fw-bold py-3 mb-4">
+                <span class="text-muted fw-light">System /</span> <span class="text-muted fw-light">Settings /</span> Setting
+              </h4>
+              <div class="row">
+                <div class="col-sm-12">
+                  <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between">
+                      <div class="card-title m-0 me-2">
+                        Pengaturan rate deposit & withdraw dengan PULSA / USD / USDT / CRYPTO. Value di isi nominal dalam rupiah untuk 1 mata uang. Abaikan pengaturan ini jika Anda tidak menggunakan 4 metode tersebut.
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-sm-6">
+                  <div class="card mb-4" id="deposit">
+                    <div class="card-header d-flex justify-content-between">
+                      <div class="card-title m-0 me-2">
+                        <h5 class="m-0 me-2">Rate Deposit</h5>
+                        <p>Note: saldo yang diterima di akun member adalah rupiah (IDR) yang telah dikalkulasi dari rate yang diatur.</p>
+                        <p>Semakin kecil nilai yang diatur dari rate asli mata uang tersebut, maka semakin profit admin dari selisih nilai.</p>
+                        <p>Ex: 1 USD = 13000 IDR, maka: Rate USD = 13000</p>
+                        <p>Contoh kasus: Member deposit 100000 dengan metode paypal (USD), maka 100000 dibagi 13000 = 7.69, jadi yang harus member transfer $7.69 (USD).</p>
+                      </div>
+                    </div>
+                    <div class="card-body">
+                      <form role="form" action="<?= $urladmin; ?>/function/setting.php" method="post" enctype="multipart/form-data">
+                        <div class="form-group mb-2">
+                          <label class="form-label">Rate Pulsa : </label>
+                          <select name="ratepulsa" class="form-control input-shadow" required>
+                            <option value="0.65" <?php if ($s3['ratepulsa'] == '0.65') {
+                                                    echo ' selected=selected';
+                                                  } ?>>0.65</option>
+                            <option value="0.70" <?php if ($s3['ratepulsa'] == '0.70') {
+                                                    echo ' selected=selected';
+                                                  } ?>>0.70</option>
+                            <option value="0.75" <?php if ($s3['ratepulsa'] == '0.75') {
+                                                    echo ' selected=selected';
+                                                  } ?>>0.75</option>
+                            <option value="0.80" <?php if ($s3['ratepulsa'] == '0.80') {
+                                                    echo ' selected=selected';
+                                                  } ?>>0.80</option>
+                            <option value="0.85" <?php if ($s3['ratepulsa'] == '0.85') {
+                                                    echo ' selected=selected';
+                                                  } ?>>0.85</option>
+                            <option value="0.90" <?php if ($s3['ratepulsa'] == '0.90') {
+                                                    echo ' selected=selected';
+                                                  } ?>>0.90</option>
+                            <option value="0.95" <?php if ($s3['ratepulsa'] == '0.95') {
+                                                    echo ' selected=selected';
+                                                  } ?>>0.95</option>
+                          </select>
+                        </div>
+                        <div class="form-group mb-2">
+                          <label class="form-label">Rate USD : </label>
+                          <input class="form-control" type="number" name="rateusd" value="<?= $s3['rateusd']; ?>" required>
+                        </div>
+                        <div class="form-group mb-2">
+                          <label class="form-label">Rate USDT TRC20 : </label>
+                          <input class="form-control" type="number" name="rateusdt" value="<?= $s3['rateusdt']; ?>" required>
+                        </div>
+                        <div class="form-group mb-2">
+                          <label class="form-label">Rate Ethereum : </label>
+                          <input class="form-control" type="number" name="rateethereum" value="<?= $s3['rateethereum']; ?>" required>
+                        </div>
+                        <div class="form-group mb-2">
+                          <label class="form-label">Rate Bitcoin : </label>
+                          <input class="form-control" type="number" name="ratebitcoin" value="<?= $s3['ratebitcoin']; ?>" required>
+                        </div>
+                        <button type="submit" name="deposit" class="btn btn-primary">Publish</button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-sm-6">
+                  <div class="card mb-4" id="withdraw">
+                    <div class="card-header d-flex justify-content-between">
+                      <div class="card-title m-0 me-2">
+                        <h5 class="m-0 me-2">Rate Withdraw</h5>
+                        <p>Note: saldo yang dikirim admin ke member sesuai metode pembayarannya yang telah dikalkulasi dari rate yang diatur.</p>
+                        <p>Semakin besar nilai yang diatur dari rate asli mata uang tersebut, maka semakin profit admin dari selisih nilai.</p>
+                        <p>Ex: 1 USD = 16000 IDR, maka: Rate USD = 16000</p>
+                        <p>Contoh kasus: Member withdraw 100000 dengan metode paypal (USD), maka 100000 dibagi 16000 = 6.25, jadi yang harus admin transfer $6.25 (USD).</p>
+                      </div>
+                    </div>
+                    <div class="card-body">
+                      <form role="form" action="<?= $urladmin; ?>/function/setting.php" method="post" enctype="multipart/form-data">
+                        <div class="form-group mb-2">
+                          <label class="form-label">Rate Pulsa : </label>
+                          <select name="ratewdpulsa" class="form-control input-shadow" required>
+                            <option value="1.25" <?php if ($s3['ratewdpulsa'] == '1.25') {
+                                                    echo ' selected=selected';
+                                                  } ?>>1.25</option>
+                            <option value="1.30" <?php if ($s3['ratewdpulsa'] == '1.30') {
+                                                    echo ' selected=selected';
+                                                  } ?>>1.30</option>
+                            <option value="1.35" <?php if ($s3['ratewdpulsa'] == '1.35') {
+                                                    echo ' selected=selected';
+                                                  } ?>>1.35</option>
+                            <option value="1.40" <?php if ($s3['ratewdpulsa'] == '1.40') {
+                                                    echo ' selected=selected';
+                                                  } ?>>1.40</option>
+                            <option value="1.45" <?php if ($s3['ratewdpulsa'] == '1.45') {
+                                                    echo ' selected=selected';
+                                                  } ?>>1.45</option>
+                            <option value="1.50" <?php if ($s3['ratewdpulsa'] == '1.50') {
+                                                    echo ' selected=selected';
+                                                  } ?>>1.50</option>
+                            <option value="1.55" <?php if ($s3['ratewdpulsa'] == '1.55') {
+                                                    echo ' selected=selected';
+                                                  } ?>>1.55</option>
+                          </select>
+                        </div>
+                        <div class="form-group mb-2">
+                          <label class="form-label">Rate USD : </label>
+                          <input class="form-control" type="number" name="ratewdusd" value="<?= $s3['ratewdusd']; ?>" required>
+                        </div>
+                        <div class="form-group mb-2">
+                          <label class="form-label">Rate USDT TRC20 : </label>
+                          <input class="form-control" type="number" name="ratewdusdt" value="<?= $s3['ratewdusdt']; ?>" required>
+                        </div>
+                        <div class="form-group mb-2">
+                          <label class="form-label">Rate Ethereum : </label>
+                          <input class="form-control" type="number" name="ratewdethereum" value="<?= $s3['ratewdethereum']; ?>" required>
+                        </div>
+                        <div class="form-group mb-2">
+                          <label class="form-label">Rate Bitcoin : </label>
+                          <input class="form-control" type="number" name="ratewdbitcoin" value="<?= $s3['ratewdbitcoin']; ?>" required>
+                        </div>
+                        <button type="submit" name="withdraw" class="btn btn-primary">Publish</button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- / Content -->
+
+            <!-- Footer -->
+            <footer class="content-footer footer bg-footer-theme">
+              <div class="container-xxl">
+                <div class="footer-container d-flex align-items-center justify-content-between py-2 flex-md-row flex-column">
+                  <div>
+                    Copyright   <?= date('Y') ?> <?= $s0['instansi']; ?>. All Rights Reserved. V<?= $versi; ?> (<small><a href="<?= $updatelink; ?>" target="_blank">Cek Update</a></small>)
+                  </div>
+                </div>
+              </div>
+            </footer>
+            <!-- / Footer -->
+
+            <div class="content-backdrop fade"></div>
+          </div>
+          <!-- Content wrapper -->
+        </div>
+        <!-- / Layout page -->
+      </div>
+
+      <!-- Overlay -->
+      <div class="layout-overlay layout-menu-toggle"></div>
+
+      <!-- Drag Target Area To SlideIn Menu On Small Screens -->
+      <div class="drag-target"></div>
+    </div>
+    <!-- / Layout wrapper -->
+
+    <!-- Core JS -->
+    <!-- build:js assets/vendor/js/core.js -->
+    <script src="<?= $urladmin; ?>/assets/vendor/libs/jquery/jquery.js?<?= $cache; ?>"></script>
+    <script src="<?= $urladmin; ?>/assets/vendor/libs/popper/popper.js?<?= $cache; ?>"></script>
+    <script src="<?= $urladmin; ?>/assets/vendor/js/bootstrap.js?<?= $cache; ?>"></script>
+    <script src="<?= $urladmin; ?>/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js?<?= $cache; ?>"></script>
+    <script src="<?= $urladmin; ?>/assets/vendor/libs/node-waves/node-waves.js?<?= $cache; ?>"></script>
+
+    <script src="<?= $urladmin; ?>/assets/vendor/libs/hammer/hammer.js?<?= $cache; ?>"></script>
+    <script src="<?= $urladmin; ?>/assets/vendor/libs/i18n/i18n.js?<?= $cache; ?>"></script>
+    <script src="<?= $urladmin; ?>/assets/vendor/libs/typeahead-js/typeahead.js?<?= $cache; ?>"></script>
+
+    <script src="<?= $urladmin; ?>/assets/vendor/js/menu.js?<?= $cache; ?>"></script>
+    <!-- endbuild -->
+
+    <!-- Vendors JS -->
+    <script src="<?= $urladmin; ?>/assets/vendor/libs/select2/select2.js?<?= $cache; ?>"></script>
+    <script src="<?= $urladmin; ?>/assets/vendor/libs/apex-charts/apexcharts.js?<?= $cache; ?>"></script>
+    <script src="<?= $urladmin; ?>/assets/vendor/libs/datatables/jquery.dataTables.js?<?= $cache; ?>"></script>
+    <script src="<?= $urladmin; ?>/assets/vendor/libs/datatables-bs5/datatables-bootstrap5.js?<?= $cache; ?>"></script>
+    <script src="<?= $urladmin; ?>/assets/vendor/libs/datatables-responsive/datatables.responsive.js?<?= $cache; ?>"></script>
+    <script src="<?= $urladmin; ?>/assets/vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.js?<?= $cache; ?>"></script>
+    <script src="<?= $urladmin; ?>/assets/vendor/libs/datatables-buttons/datatables-buttons.js?<?= $cache; ?>"></script>
+    <script src="<?= $urladmin; ?>/assets/vendor/libs/datatables-buttons-bs5/buttons.bootstrap5.js?<?= $cache; ?>"></script>
+    <script src="<?= $urladmin; ?>/assets/vendor/libs/datatables-buttons/buttons.html5.js?<?= $cache; ?>"></script>
+    <script src="<?= $urladmin; ?>/assets/vendor/libs/datatables-buttons/buttons.print.js?<?= $cache; ?>"></script>
+
+    <!-- Main JS -->
+    <script src="<?= $urladmin; ?>/assets/js/main.js?<?= $cache; ?>"></script>
+    <script src="<?= $urladmin; ?>/assets/js/forms-selects.js?<?= $cache; ?>"></script>
+    <script src="<?= $urladmin; ?>/assets/vendor/libs/summernote/dist/summernote-bs4.min.js?<?= $cache; ?>"></script>
+    <script>
+      $(document).ready(function() {
+        //Default data table
+        $('#default-datatable').DataTable();
+        $('.summernoteEditor').summernote({
+          height: 300,
+          tabsize: 2
+        });
+        setInterval(function() {
+          $('#getNotif').load('<?= $urladmin; ?>/getNotif.php');
+        }, 10000);
+      });
+    </script>
+  </body>
+<?php endif; ?>
+
+</html>

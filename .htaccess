@@ -1,0 +1,368 @@
+# Directory Listing
+Options All -Indexes
+
+# Error Redirect
+ErrorDocument 404 /404
+
+# Header all
+<IfModule mod_headers.c>
+	# X-Frame-Options header missing
+	Header append X-FRAME-OPTIONS "SAMEORIGIN"
+
+	# XSS Protection Not Enabled
+	Header set X-XSS-Protection "1; mode=block"
+
+	# Missing X-Content-Type-Options is not specified
+	Header set X-Content-Type-Options nosniff
+
+	# Protect from SQL injection
+	Options +FollowSymLinks
+	RewriteEngine On
+	RewriteCond %{QUERY_STRING} (\<|%3C).*script.*(\>|%3E) [NC,OR]
+	RewriteCond %{QUERY_STRING} GLOBALS(=|\[|\%[0-9A-Z]{0,2}) [OR]
+	RewriteCond %{QUERY_STRING} _REQUEST(=|\[|\%[0-9A-Z]{0,2})
+	RewriteRule ^(.*)$ index.php [F,L]
+
+	# IMAGE CACHE
+	<FilesMatch "\.(ico|pdf|flv|jpg|JPG|jpeg|png|PNG|gif|js|css|swf)$">
+	Header set Cache-Control "max-age=31536000, public"
+	</FilesMatch>
+
+	# TEXT CACHE
+	<FilesMatch "\.(xml|txt)$">
+	Header set Cache-Control "max-age=31536000, public"
+	</FilesMatch>
+
+	# HTML CACHES
+	<FilesMatch "\.(html|htm)$">
+		Header set Cache-Control "max-age=31536000, public"
+	</FilesMatch>
+</IfModule>
+
+# Disable modsecurity
+<IfModule mod_security.c>
+	SecFilterEngine Off
+	SecFilterScanPOST Off
+
+	# Server Information Disclosure
+	ServerTokens Prod
+	ServerSignature Off
+	SecServerSignature " "
+</IfModule>
+
+# Block config access
+<Files .koneksi.php>
+	Order allow,deny
+	Deny from all
+</Files>
+
+# Block htaccess access
+<files .htaccess>
+	order allow,deny
+	deny from all
+</files>
+
+<IfModule mod_rewrite.c>
+  	<IfModule mod_negotiation.c>
+   		Options -MultiViews -Indexes
+  	</IfModule>
+
+	Options +FollowSymlinks
+	RewriteEngine on
+	RewriteBase /
+
+	RewriteEngine On
+	RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
+	RewriteRule ^(.*)$ https://%1/$1 [R=301,L]
+
+	RewriteCond %{HTTPS} off
+	RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+	# PROVIDER PAGES
+	RewriteRule ^slot/([a-zA-Z0-9_-]+)/$ slot.php?provider=$1 [L]
+	RewriteRule ^sports/([a-zA-Z0-9_-]+)/$ sports.php?provider=$1 [L]
+	RewriteRule ^casino/([a-zA-Z0-9_-]+)/$ casino.php?provider=$1 [L]
+	RewriteRule ^fishing/([a-zA-Z0-9_-]+)/$ fishing.php?provider=$1 [L]
+	RewriteRule ^egames/([a-zA-Z0-9_-]+)/$ egames.php?provider=$1 [L]
+	RewriteRule ^togel/([a-zA-Z0-9_-]+)/$ togel.php?provider=$1 [L]
+	RewriteRule ^slot/([a-zA-Z0-9_-]+)/page=([a-zA-Z0-9_-]+)$ slot.php?provider=$1&page=$2 [L]
+	RewriteRule ^sports/([a-zA-Z0-9_-]+)/page=([a-zA-Z0-9_-]+)$ sports.php?provider=$1&page=$2 [L]
+	RewriteRule ^casino/([a-zA-Z0-9_-]+)/page=([a-zA-Z0-9_-]+)$ casino.php?provider=$1&page=$2 [L]
+	RewriteRule ^fishing/([a-zA-Z0-9_-]+)/page=([a-zA-Z0-9_-]+)$ fishing.php?provider=$1&page=$2 [L]
+	RewriteRule ^egames/([a-zA-Z0-9_-]+)/page=([a-zA-Z0-9_-]+)$ egames.php?provider=$1&page=$2 [L]
+	RewriteRule ^togel/([a-zA-Z0-9_-]+)/page=([a-zA-Z0-9_-]+)$ togel.php?provider=$1&page=$2 [L]
+
+	# SLOT PAGES
+	RewriteRule ^slot/rtp-slot$ slot-rtp.php [L]
+	RewriteRule ^slot/PRAGMATIC$ PRAGMATIC.php [L]
+	RewriteRule ^slot/PGSOFT$ PGSOFT.php [L]
+	RewriteRule ^slot/HABANERO$ HABANERO.php [L]
+	RewriteRule ^slot/BOOONGO$ BOOONGO.php [L]
+	RewriteRule ^slot/CQ9$ CQ9.php [L]
+	RewriteRule ^slot/PLAYSON$ PLAYSON.php [L]
+	RewriteRule ^slot/EVOPLAY$ EVOPLAY.php [L]
+	RewriteRule ^slot/TOPTREND$ TOPTREND.php [L]
+	RewriteRule ^slot/DREAMTECH$ DREAMTECH.php [L]
+	RewriteRule ^slot/REELKINGDOM$ REELKINGDOM.php [L]
+	RewriteRule ^casino/EVOLUTION$ EVOLUTION.php [L]
+	RewriteRule ^casino/EZUGI$ EZUGI.php [L]
+
+	# MEMBER PAGES
+	RewriteRule ^bank$ members/bank.php [L]
+	RewriteRule ^dashboard$ members/dashboard.php [L]
+	RewriteRule ^deposit$ members/deposit.php [L]
+	RewriteRule ^history-betting$ members/history-betting.php [L]
+	RewriteRule ^history-bonus$ members/history-bonus.php [L]
+	RewriteRule ^history-slot$ members/history-slot.php [L]
+	RewriteRule ^history-togel$ members/history-togel.php [L]
+	RewriteRule ^history$ members/history.php [L]
+	RewriteRule ^password$ members/password.php [L]
+	RewriteRule ^payment$ members/payment.php [L]
+	RewriteRule ^payment-withdraw$ members/payment-withdraw.php [L]
+	RewriteRule ^profil$ members/profil.php [L]
+	RewriteRule ^referrals$ members/referrals.php [L]
+	RewriteRule ^taruhan$ members/taruhan.php [L]
+	RewriteRule ^withdraw$ members/withdraw.php [L]
+
+	# STATIC PAGES
+	RewriteRule ^page/([a-zA-Z0-9_-]+)$ page/page.php?p=$1 [L]
+	RewriteRule ^contact page/contact.php [L]
+	RewriteRule ^referral page/referral.php [L]
+	RewriteRule ^promo page/promo.php [L]
+	RewriteRule ^search page/search.php [L]
+	RewriteRule ^404 page/404.php [L]
+	RewriteRule ^maintenance-games page/maintenance-games.php [L]
+	RewriteRule ^maintenance-web page/maintenance-web.php [L]
+
+	# AUTH PAGES
+	RewriteRule ^login auth/login.php [L]
+	RewriteRule ^register auth/register.php [L]
+	RewriteRule ^logout auth/logout.php [L]
+	RewriteRule ^forgot auth/forgot.php [L]
+
+	# Sitemap, RSS, Manifest, Robots.txt
+	RewriteRule ^sitemap.xml seo/main/sitemap.php [L]
+	RewriteRule ^rss.xml seo/main/rss.php [L]
+	RewriteRule ^manifest.json seo/main/manifest.php [L]
+	RewriteRule ^robots.txt seo/main/robots.php [L]
+
+	# ALL PAGES
+	RewriteRule ^([a-zA-Z0-9_-]+)$ $1.php [L]
+	RewriteRule ^([a-zA-Z0-9_-]+)/$ $1.php [L]
+</ifModule>
+
+<IfModule mod_rewrite.c>
+	## Block bad bots
+	RewriteCond %{HTTP_USER_AGENT} ^BlackWidow [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^Bot\ mailto:craftbot@yahoo.com [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^ChinaClaw [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^Custo [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^DISCo [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^Download\ Demon [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^eCatch [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^EirGrabber [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^EmailSiphon [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^EmailWolf [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^Express\ WebPictures [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^ExtractorPro [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^EyeNetIE [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^FlashGet [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^GetRight [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^GetWeb! [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^Go!Zilla [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^Go-Ahead-Got-It [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^GrabNet [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^Grafula [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^HMView [OR]
+	RewriteCond %{HTTP_USER_AGENT} HTTrack [NC,OR]
+	RewriteCond %{HTTP_USER_AGENT} ^Image\ Stripper [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^Image\ Sucker [OR]
+	RewriteCond %{HTTP_USER_AGENT} Indy\ Library [NC,OR]
+	RewriteCond %{HTTP_USER_AGENT} ^InterGET [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^Internet\ Ninja [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^JetCar [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^JOC\ Web\ Spider [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^larbin [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^LeechFTP [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^Mass\ Downloader [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^MIDown\ tool [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^Mister\ PiX [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^Navroad [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^NearSite [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^NetAnts [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^NetSpider [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^Net\ Vampire [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^NetZIP [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^Octopus [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^Offline\ Explorer [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^Offline\ Navigator [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^PageGrabber [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^Papa\ Foto [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^pavuk [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^pcBrowser [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^RealDownload [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^ReGet [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^SiteSnagger [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^SmartDownload [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^SuperBot [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^SuperHTTP [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^Surfbot [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^tAkeOut [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^Teleport\ Pro [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^VoidEYE [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^Web\ Image\ Collector [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^Web\ Sucker [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^WebAuto [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^WebCopier [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^WebFetch [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^WebGo\ IS [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^WebLeacher [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^WebReaper [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^WebSauger [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^Website\ eXtractor [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^Website\ Quester [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^WebStripper [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^WebWhacker [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^WebZIP [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^Wget [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^Widow [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^WWWOFFLE [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^Xaldon\ WebSpider [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^Zeus
+	RewriteRule ^.* - [F,L]
+
+	# TRACE method enabled
+	# Forbid access to all URIs for http TRACE, OPTIONS, PUT, DELETE and PATCH requests
+	# Disable only TRACE, due to behaviour of Laravel need to handle normal CRUD Operation
+	# OPTIONS is enabled as well due to when mobile application consume API, it will call
+	# OPTIONS method first, before calling the GET / POST / PUT method.
+	RewriteCond %{REQUEST_METHOD} ^(TRACE)
+	RewriteRule .* - [F]
+</IfModule>
+
+<IfModule pagespeed_module>
+ 	ModPagespeed On
+</IfModule>
+
+# Cache expired time
+<IfModule mod_expires.c>
+	ExpiresActive On
+	# GAMBAR
+	ExpiresByType image/jpeg "access plus 1 year"
+	ExpiresByType image/jpg "access plus 1 year"
+	ExpiresByType image/JPG "access plus 1 year"
+	ExpiresByType image/gif "access plus 1 year"
+	ExpiresByType image/png "access plus 1 year"
+	ExpiresByType image/PNG "access plus 1 year"
+	ExpiresByType image/bmp "access plus 1 year"
+	ExpiresByType image/webp "access plus 1 year"
+	ExpiresByType image/svg+xml "access plus 1 year"
+	ExpiresByType image/x-icon "access plus 1 year"
+	ExpiresByType image/ico "access plus 1 year"
+	ExpiresByType image/vnd.microsoft.icon "access plus 1 year"
+
+	# VIDEO
+	ExpiresByType video/webm "access plus 1 year"
+	ExpiresByType video/mp4 "access plus 1 year"
+	ExpiresByType video/mpeg "access plus 1 year"
+	ExpiresByType video/ogg "access plus 1 year"
+
+	# FONTS
+	ExpiresByType font/ttf "access plus 1 year"
+	ExpiresByType font/otf "access plus 1 year"
+	ExpiresByType font/woff "access plus 1 year"
+	ExpiresByType font/woff2 "access plus 1 year"
+	ExpiresByType application/font-woff "access plus 1 year"
+
+	# HTML, CSS, JAVASCRIPT
+	ExpiresByType text/html "access plus 1 year"
+	ExpiresByType text/css "access plus 1 year"
+	ExpiresByType text/javascript "access plus 1 year"
+	ExpiresByType text/x-javascript "access plus 1 year"
+	ExpiresByType text/plain "access plus 1 year"
+	ExpiresByType text/x-component "access plus 1 year"
+	ExpiresByType text/cache-manifest "access plus 1 month"
+
+	# XML, JSON, JAVASCRIPT APP
+	ExpiresByType application/atom+xml "access plus 1 hour"
+	ExpiresByType application/rdf+xml "access plus 1 hour"
+	ExpiresByType application/rss+xml "access plus 1 hour"
+	ExpiresByType application/json "access plus 1 month"
+	ExpiresByType application/ld+json "access plus 1 month"
+	ExpiresByType application/schema+json "access plus 1 month"
+	ExpiresByType application/vnd.geo+json "access plus 1 month"
+	ExpiresByType application/xml "access plus 1 month"
+	ExpiresByType application/javascript "access plus 1 years"
+	ExpiresByType application/x-javascript "access plus 1 years"
+	ExpiresByType application/manifest+json "access plus 1 month"
+	ExpiresByType application/x-web-app-manifest+json "access plus 1 month"
+	ExpiresByType application/pdf "access plus 1 year"
+
+	# PDF, FONT
+	ExpiresByType application/x-shockwave-flash "access plus 1 year"
+	ExpiresByType application/vnd.ms-fontobject "access plus 1 year"
+	ExpiresByType application/x-font-ttf "access plus 1 year"
+	ExpiresByType application/font-woff "access plus 1 year"
+	ExpiresByType application/font-woff2 "access plus 1 year"
+	ExpiresByType application/x-font-woff "access plus 1 year"
+</IfModule>
+
+# Compress files & browser
+<IfModule mod_deflate.c>
+	# Compress All
+	AddOutputFilterByType DEFLATE text/plain
+	AddOutputFilterByType DEFLATE text/javascript
+	AddOutputFilterByType DEFLATE text/html
+	AddOutputFilterByType DEFLATE text/xml
+	AddOutputFilterByType DEFLATE text/css
+	AddOutputFilterByType DEFLATE text/vtt
+	AddOutputFilterByType DEFLATE text/x-component
+	AddOutputFilterByType DEFLATE application/xml
+	AddOutputFilterByType DEFLATE application/xhtml+xml
+	AddOutputFilterByType DEFLATE application/rss+xml
+	AddOutputFilterByType DEFLATE application/js
+	AddOutputFilterByType DEFLATE application/javascript
+	AddOutputFilterByType DEFLATE application/x-javascript
+	AddOutputFilterByType DEFLATE application/x-httpd-php
+	AddOutputFilterByType DEFLATE application/x-httpd-fastphp
+	AddOutputFilterByType DEFLATE application/atom+xml
+	AddOutputFilterByType DEFLATE application/json
+	AddOutputFilterByType DEFLATE application/ld+json
+	AddOutputFilterByType DEFLATE application/vnd.ms-fontobject
+	AddOutputFilterByType DEFLATE application/x-font-ttf
+	AddOutputFilterByType DEFLATE application/font-sfnt
+	AddOutputFilterByType DEFLATE application/x-web-app-manifest+json
+	AddOutputFilterByType DEFLATE font/opentype
+	AddOutputFilterByType DEFLATE font/otf
+	AddOutputFilterByType DEFLATE font/ttf
+	AddOutputFilterByType DEFLATE font/sfnt
+	AddOutputFilterByType DEFLATE image/svg+xml
+	AddOutputFilterByType DEFLATE image/x-icon
+
+	# Compress text files
+	<filesMatch "\.(css|js|ttf|xml|gz|html|php)$">
+		Header append Vary: Accept-Encoding
+		SetOutputFilter DEFLATE
+	</filesMatch>
+
+	# Exception Images
+	SetEnvIfNoCase REQUEST_URI \.(?:ico|jpg|JPG|jpeg|png|PNG|gif)$ no-gzip dont-vary
+
+	# Remove browser bugs (only needed for really old browsers)
+	BrowserMatch ^Mozilla/4 gzip-only-text/html
+	BrowserMatch ^Mozilla/4\.0[678] no-gzip
+	BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
+	Header append Vary User-Agent
+</IfModule>
+
+# GZIP Compression
+<ifModule mod_gzip.c>
+	mod_gzip_on Yes
+	mod_gzip_dechunk Yes
+	mod_gzip_item_include file \.(html?|txt|css|js|php|pl)$
+	mod_gzip_item_include mime ^application/x-javascript.*
+	mod_gzip_item_include mime ^text/.*
+	mod_gzip_item_exclude rspheader ^Content-Encoding:.*gzip.*
+	mod_gzip_item_exclude mime ^image/.*
+	mod_gzip_item_include handler ^cgi-script$
+</ifModule>
